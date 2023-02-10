@@ -217,3 +217,4 @@ if __name__ == '__main__':
     label_config = config.get('label_config')
 
     logger.info(f"aws_config: {aws_config}\nlabel_config: {label_config}")
+    main(aws_config, label_config)
