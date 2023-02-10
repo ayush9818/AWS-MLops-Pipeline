@@ -1,0 +1,32 @@
+{
+    "aws_config" : {
+        "iam_role" : "",
+        "region_name" : "",
+        "private_work_team_arn" : "",
+        "prehuman_arn" : "",
+        "acs_arn" : "",
+        "bucket_name" : ""
+    },
+
+    "label_config" : {
+        "dataset_path" : "",
+        "manifest_upload_dir" : "",
+        "manifest_file_name" : "",
+        "label_list" : ["label1", "label2"],
+        "label_file_name" : "",
+        "label_file_upload_dir" : "",
+        "max_concurrent_task_count" : "",
+        "number_of_human_workers" : "",
+        "task_availability_lifetime" : "",
+        "task_time_limit" : "",
+        "task_description" : "",
+        "task_keywords" : [],
+        "task_title" : "",
+        "template_file_uri" : "",
+        "output_dir" : "",
+        "job_name" : "",
+    }
+
+
+
+}
