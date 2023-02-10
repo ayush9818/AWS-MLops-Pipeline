@@ -3,7 +3,15 @@ import argparse
 import json 
 import pandas as pd
 from random import shuffle
+import boto3
+from loguru import logger
 
+"""
+TO BE DONE 
+    Functions Documentation
+    Implement Class Mapping
+    Parallel Image Download
+"""
 
 def format_annotation(img_h, img_w, x_top, y_top, box_w, box_h, class_id):
     center_x = round((x_top + (box_w / 2)) / img_w,4)
@@ -59,7 +67,7 @@ def prepare_data_df(dataset_path):
             is_background_list.append(False)
     data_df = pd.DataFrame({
         "image_name" : image_name_list,
-        "image_path" : image_path_list,
+        "s3_path" : image_path_list,
         "annotations" : anno_list,
         "is_background" : is_background_list
         }
@@ -82,6 +90,23 @@ def split_dataset(data_df, split_dict):
 
 def prepare_yolo_annotations(data_df, class_mapping, train_path, valid_path):
     pass
+
+def download_dataset(data_df, bucket_name):
+    s3 = boto3.resource('s3')
+    data_bucket = s3.Bucket(bucket_name)
+    total_images = data_df.shape[0]
+    done = 0
+    for idx,row in data_df.iterrows():
+        s3_path = row['s3_path']
+        local_path = row['image_path']
+        try:
+            data_bucket.download_file(s3_path, local_path)
+            done+=1
+        except Exception as e:
+            logger.error(f"Error downloading {s3_path} to {local_path}. Error: {e}")
+        if done % 50 == 0:
+            logger.info(f"{done}/{total_images} finished"}
+        
 
 def prepare_dataset():
     pass
