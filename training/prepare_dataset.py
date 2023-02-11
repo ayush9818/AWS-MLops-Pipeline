@@ -44,7 +44,6 @@ def format_annotation(img_h, img_w, x_top, y_top, box_w, box_h, class_id):
     }
     return anno_dict
                 
-
 def get_annotations(anno_info):
     """
     Extracts the annotations from sagemaker manifest file format and returns yolo formatted annotations
@@ -120,7 +119,6 @@ def prepare_data_df(dataset_path):
     )
     return data_df, class_mapping
 
-
 def split_dataset(data_df, split_dict):
     """
     Split the input dataset into train and validations sets
@@ -160,26 +158,24 @@ def prepare_label_files(df, label_save_path):
             for anno in row['annotations']:
                 f.writelines(f"{anno['label']} {anno['center_x']} {anno['center_y']} {anno['w']} {anno['h']}\n")
     
-
 def prepare_yaml_file(train_images_path, valid_images_path, class_mapping, save_path):
     """Prepare the yaml file for training"""
     data_summary = {
         "train" : train_images_path,
-        "valid" : valid_images_path,
+        "val" : valid_images_path,
         "names" : class_mapping
     }
     with open(save_path,'w') as f:
         yaml.dump(data_summary, f)
 
-
 def prepare_yolo_annotations(data_df, class_mapping, save_dir, yaml_save_path):
     logger.info(f"Dataset Save Directory: {save_dir}")
     os.makedirs(save_dir, exist_ok=True)
 
-    train_image_path = os.path.join(save_dir,'images/train')
-    valid_image_path = os.path.join(save_dir,'images/val')
-    train_labels_path = os.path.join(save_dir,'labels/train')
-    valid_labels_path = os.path.join(save_dir,'labels/val')
+    train_image_path = os.path.abspath(os.path.join(save_dir,'images/train'))
+    valid_image_path = os.path.abspath(os.path.join(save_dir,'images/val'))
+    train_labels_path = os.path.abspath(os.path.join(save_dir,'labels/train'))
+    valid_labels_path = os.path.abspath(os.path.join(save_dir,'labels/val'))
     logger.info(f"Train Images Directory: {train_image_path}\nValid Images Directory: {valid_image_path}")
     logger.info(f"Train labels Directory: {train_labels_path}\nValid Labels Directory : {valid_labels_path}")
     os.makedirs(train_image_path,exist_ok=True)
@@ -207,8 +203,6 @@ def prepare_yolo_annotations(data_df, class_mapping, save_dir, yaml_save_path):
     prepare_yaml_file(train_image_path, valid_image_path, class_mapping, yaml_save_path)
     return data_df 
 
-
-
 def download_dataset(data_df, bucket_name):
     logger.info(f"Downloading dataset")
     s3 = boto3.resource('s3')
@@ -228,8 +222,6 @@ def download_dataset(data_df, bucket_name):
         if done % 50 == 0:
             logger.info(f"{done}/{total_images} finished")
 
-        
-
 def prepare_dataset(data_config, aws_config):
     # Step 1 : Prepare the dataset df containing annotations and image_info
     data_df, class_mapping = prepare_data_df(dataset_path=data_config.get('input_dataset_path'))
@@ -247,7 +239,6 @@ def prepare_dataset(data_config, aws_config):
 
     # Step 4 : Download the images into local from s3 
     download_dataset(data_df=data_df, bucket_name=aws_config.get('bucket_name'))
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

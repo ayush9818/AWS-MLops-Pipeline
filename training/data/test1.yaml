@@ -1,4 +1,4 @@
 names:
   0: MASK
-train: data/test1/images/train
-valid: data/test1/images/val
+train: /Users/dare_devil/Documents/pythonProject/Asurion/AWS_SAGEMAKER_PIPELINE/training/data/test1/images/train
+val: /Users/dare_devil/Documents/pythonProject/Asurion/AWS_SAGEMAKER_PIPELINE/training/data/test1/images/val
