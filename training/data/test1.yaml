@@ -1,0 +1,4 @@
+names:
+  0: MASK
+train: data/test1/images/train
+valid: data/test1/images/val

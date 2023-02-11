@@ -1,0 +1,13 @@
+{
+    "data_config" : {
+        "input_dataset_path" : "configs/output.manifest",
+        "splt_dict" : {"train" : 0.8, "valid" : 0.2},
+        "dataset_save_dir" : "data/test1/",
+        "yaml_file_path" : "data/test1.yaml"
+
+    },
+
+    "aws_config" : {
+        "bucket_name" : "sixsense-organization-assets"
+    }
+}
