@@ -15,8 +15,16 @@ from prepare_dataset import prepare_dataset
 # https://docs.ultralytics.com/cfg/ : Config parameters list for training
 # pip install ultralytics
 
+
 def parse_args():
-    pass
+    parser = argparse.ArgumentParser()
+    # AWS
+    parser.add_argument('--model_dir', type=str, default='/opt/ml/model')
+    parser.add_argument('--checkpoint_path', type=str, default='/opt/ml/checkpoints')
+    parser.add_argument('--data-dir', type=str, default='/opt/ml/input/data/training')
+    args = parser.parse_args()
+    return args
+
 
 def train(data_config, model_config):
     model_config['data'] = data_config['yaml_file_path']
@@ -34,11 +42,9 @@ def main(aws_config, data_config, model_config):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--cfg', type=str, help='Configuration file for training')
-
-    args = parser.parse_args()
-    config_path = args.cfg 
+    # Config file name should be config.json 
+    args = parse_args()
+    config_path = os.path.join(args.data_dir,'config.json')
     assert os.path.exists(config_path), f"Configuration file {config_path} does not exist"
 
     config = json.load(open(config_path))
