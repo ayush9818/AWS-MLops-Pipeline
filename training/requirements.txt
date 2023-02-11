@@ -1,0 +1,4 @@
+ultralytics
+loguru
+boto3
+sagemaker-training

@@ -15,6 +15,9 @@ from prepare_dataset import prepare_dataset
 # https://docs.ultralytics.com/cfg/ : Config parameters list for training
 # pip install ultralytics
 
+def parse_args():
+    pass
+
 def train(data_config, model_config):
     model_config['data'] = data_config['yaml_file_path']
     model = YOLO(model_config.get('model','yolov8n.pt'))
@@ -22,9 +25,11 @@ def train(data_config, model_config):
 
 def main(aws_config, data_config, model_config):
     # Step 1 : Prepare dataset
+    logger.info('Preparing dataset for Model Training')
     prepare_dataset(data_config=data_config, aws_config=aws_config)
 
     #Step 2 : Format model_config and train the model
+    logger.info('Training Model')
     train(data_config, model_config)
 
 

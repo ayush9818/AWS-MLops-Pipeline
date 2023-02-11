@@ -5,7 +5,9 @@ __pycache__/
 
 # C extensions
 *.so
-
+training/data
+training/runs
+training/yolov8n.pt
 # Distribution / packaging
 .Python
 build/
