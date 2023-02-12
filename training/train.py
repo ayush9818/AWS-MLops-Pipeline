@@ -15,6 +15,8 @@ from prepare_dataset import prepare_dataset
 # https://docs.ultralytics.com/cfg/ : Config parameters list for training
 # pip install ultralytics
 
+# TODO : Upload the final trained model weights on fixed location on s3
+# TODO : Create a tar file for the final trained model weights which is to be used in inference endpoint
 
 def parse_args():
     parser = argparse.ArgumentParser()
