@@ -197,7 +197,7 @@ def prepare_yolo_annotations(data_df, class_mapping, save_dir, yaml_save_path):
     valid_df['image_path'] = valid_df['s3_path'].apply(lambda x: os.path.join(valid_image_path,os.path.basename(x)))
 
     data_df = pd.concat([train_df,valid_df])
-    data_df.to_json(os.path.join(save_dir,'data_df.json'))
+    #data_df.to_json(os.path.join(save_dir,'data_df.json'))
 
     logger.info(f"Preparing Data Yaml File for training")
     prepare_yaml_file(train_image_path, valid_image_path, class_mapping, yaml_save_path)
@@ -205,26 +205,44 @@ def prepare_yolo_annotations(data_df, class_mapping, save_dir, yaml_save_path):
 
 def download_dataset(data_df, bucket_name):
     logger.info(f"Downloading dataset")
-    s3 = boto3.resource('s3')
-    data_bucket = s3.Bucket(bucket_name)
     bucket_prefix = f"s3://{bucket_name}/"
     data_df['s3_path'] = data_df['s3_path'].apply(lambda x : x.replace(bucket_prefix,''))
     total_images = data_df.shape[0]
     done = 0
+    files_to_remove = []
     for idx,row in data_df.iterrows():
         s3_path = row['s3_path']
         local_path = row['image_path']
-        try:
-            data_bucket.download_file(s3_path, local_path)
-            done+=1
-        except Exception as e:
-            logger.error(f"Error downloading {s3_path} to {local_path}. Error: {e}")
+        response = download_files_from_s3(s3_path, local_path, bucket_name)
+        if response is None:
+            files_to_remove.append(local_path)
+            continue
         if done % 50 == 0:
-            logger.info(f"{done}/{total_images} finished")
+            logger.info(f"{done}/{total_images} finished. {len(files_to_remove)}/{total_images} Failed")
+    data_df = data_df[~data_df.image_path.isin(files_to_remove)]
+    return data_df
+
+def download_files_from_s3(s3_path, local_path, bucket_name):
+    if os.path.exists(s3_path):
+        return s3_path
+    my_bucket = boto3.resource('s3').Bucket(bucket_name)
+    try:
+        base_dir = os.path.dirname(local_path)
+        os.makedirs(base_dir,exist_ok=True)
+        my_bucket.download(s3_path, local_path)
+    except Exception as e:
+        logger.error(f"Error downloading {s3_path}. Error: {e}")
+        return None
+    return local_path
 
 def prepare_dataset(data_config, aws_config):
     # Step 1 : Prepare the dataset df containing annotations and image_info
-    data_df, class_mapping = prepare_data_df(dataset_path=data_config.get('input_dataset_path'))
+    save_dir = data_config.get('dataset_save_dir')
+    dataset_s3_path = data_config.get('input_dataset_path')
+    dataset_name = os.path.basename(dataset_s3_path)
+    dataset_local_path = os.path.join(save_dir, dataset_name)
+    dataset_local_path = download_files_from_s3(dataset_s3_path, dataset_local_path, aws_config.get('bucket_name'))
+    data_df, class_mapping = prepare_data_df(dataset_path=dataset_local_path)
 
     # Step 2 : Split the dataframe into train and validation sets 
     data_df = split_dataset(data_df=data_df, split_dict=data_config.get('split_dict',None))
@@ -238,7 +256,8 @@ def prepare_dataset(data_config, aws_config):
     )
 
     # Step 4 : Download the images into local from s3 
-    download_dataset(data_df=data_df, bucket_name=aws_config.get('bucket_name'))
+    data_df = download_dataset(data_df=data_df, bucket_name=aws_config.get('bucket_name'))
+    data_df.to_json(os.path.join(save_dir,'data_df.json'))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

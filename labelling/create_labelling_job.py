@@ -200,7 +200,8 @@ def main(aws_config, label_config):
     job_info = sagemaker_client.create_labeling_job(**ground_truth_request)
     logger.info(f"Created Labeling Job. Job information : {job_info}")
 
-    #sagemaker_client.describe_labeling_job(LabelingJobName=label_config.get('job_name'))["LabelingJobStatus"]
+    job_status = sagemaker_client.describe_labeling_job(LabelingJobName=label_config.get('job_name'))["LabelingJobStatus"]
+    print(job_status)
 
 
 if __name__ == '__main__':
