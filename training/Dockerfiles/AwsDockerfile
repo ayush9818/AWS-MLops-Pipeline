@@ -1,17 +1,24 @@
 # UPGRADE TO GPU BASED BASE IMAGE
-FROM python:3
+FROM python:3.8.9
 LABEL com.amazonaws.sagemaker.capabilities.accept-bind-to-port=true
 
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 RUN update-alternatives --install /usr/local/bin/pip pip /usr/local/bin/pip3 1
-
-RUN pip3 install sagemaker-training
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 
 COPY dockerd-entrypoint.py /usr/local/bin/dockerd-entrypoint.py
 RUN chmod +x /usr/local/bin/dockerd-entrypoint.py
 
+
 ENV PATH="/opt/ml/code:${PATH}"
 COPY . /opt/ml/code
+
+RUN pip install awscli
+# Configure the Region according to needs
+RUN aws configure set default.region ap-southeast-1
+
+
+RUN pip install --upgrade pip
 RUN pip3 install --no-cache-dir -r /opt/ml/code/requirements.txt
 
 WORKDIR /opt/ml/code

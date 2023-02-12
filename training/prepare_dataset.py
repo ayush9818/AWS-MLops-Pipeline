@@ -229,7 +229,7 @@ def download_files_from_s3(s3_path, local_path, bucket_name):
     try:
         base_dir = os.path.dirname(local_path)
         os.makedirs(base_dir,exist_ok=True)
-        my_bucket.download(s3_path, local_path)
+        my_bucket.download_file(s3_path, local_path)
     except Exception as e:
         logger.error(f"Error downloading {s3_path}. Error: {e}")
         return None
