@@ -8,6 +8,7 @@ import json
 import warnings
 import argparse 
 from loguru import logger
+import time
 warnings.filterwarnings('ignore')
 
 
@@ -170,7 +171,7 @@ def main(aws_config, label_config):
         MaxConcurrentTaskCount=label_config.get('max_concurrent_task_count'),
         NumberOfHumanWorkersPerDataObject=label_config.get('number_of_human_workers'),
         TaskAvailabilityLifetimeInSeconds=label_config.get('task_availability_lifetime'),
-        TaskTimeLimitInSecond=label_config.get('task_time_limit'),
+        TaskTimeLimitInSeconds=label_config.get('task_time_limit'),
         TaskDescription=label_config.get('task_description'),
         TaskKeywords=label_config.get('task_keywords'),
         TaskTitle=label_config.get('task_title'),
@@ -180,7 +181,7 @@ def main(aws_config, label_config):
 
     # Step 4 : Create a request body to create a labelling job 
     bucket_name = aws_config.get('bucket_name')
-    manifest_file_uri = os.path.join(f"s3://{bucket_name}",label_config['manifest_file_upload_dir'],label_config['manifest_file_name'])
+    manifest_file_uri = os.path.join(f"s3://{bucket_name}",label_config['manifest_upload_dir'],label_config['manifest_file_name'])
     output_path_uri = os.path.join(f"s3://{bucket_name}",label_config['output_dir'])
     label_file_uri = os.path.join(f"s3://{bucket_name}",label_config['label_file_upload_dir'],label_config['label_file_name'])
     ground_truth_request = create_ground_truth_request(
@@ -200,7 +201,12 @@ def main(aws_config, label_config):
     job_info = sagemaker_client.create_labeling_job(**ground_truth_request)
     logger.info(f"Created Labeling Job. Job information : {job_info}")
 
-    #sagemaker_client.describe_labeling_job(LabelingJobName=label_config.get('job_name'))["LabelingJobStatus"]
+    job_status = sagemaker_client.describe_labeling_job(LabelingJobName=label_config.get('job_name'))["LabelingJobStatus"]
+    while job_status not in ['Failed', 'Completed']:
+        print(f"Job Name : {label_config.get('job_name')}, Job Status : {job_status}")
+        job_status = sagemaker_client.describe_labeling_job(LabelingJobName=label_config.get('job_name'))["LabelingJobStatus"]
+        time.sleep(60)
+                             
 
 
 if __name__ == '__main__':

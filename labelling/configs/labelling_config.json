@@ -1,30 +1,30 @@
 {
     "aws_config" : {
-        "iam_role" : "",
-        "region_name" : "",
-        "private_work_team_arn" : "",
-        "prehuman_arn" : "",
-        "acs_arn" : "",
-        "bucket_name" : ""
+        "iam_role" : "arn:aws:iam::050381676378:role/service-role/AmazonSageMaker-ExecutionRole-20230210T000573",
+        "region_name" : "ap-southeast-1",
+        "private_work_team_arn" : "arn:aws:sagemaker:ap-southeast-1:050381676378:workteam/private-crowd/test-labelling-team-1",
+        "pre_human_arn" : "arn:aws:lambda:ap-southeast-1:377565633583:function:PRE-BoundingBox",
+        "acs_arn" : "arn:aws:lambda:ap-southeast-1:377565633583:function:ACS-BoundingBox",
+        "bucket_name" : "sixsense-organization-assets"
     },
 
     "label_config" : {
-        "dataset_path" : "",
-        "manifest_upload_dir" : "",
-        "manifest_file_name" : "",
-        "label_list" : ["label1", "label2"],
-        "label_file_name" : "",
-        "label_file_upload_dir" : "",
-        "max_concurrent_task_count" : "",
-        "number_of_human_workers" : "",
-        "task_availability_lifetime" : "",
-        "task_time_limit" : "",
-        "task_description" : "",
-        "task_keywords" : [],
-        "task_title" : "",
-        "template_file_uri" : "",
-        "output_dir" : "",
-        "job_name" : "",
+        "dataset_path" : "ayush/labeling_job_test/dataset-small/",
+        "manifest_upload_dir" : "ayush/labeling_job_test/dataset-small/",
+        "manifest_file_name" : "labeling_12Feb_v1.manifest",
+        "label_list" : ["MASK"],
+        "label_file_name" : "labels_12Feb_v1.json",
+        "label_file_upload_dir" : "ayush/labeling_job_test/labelling_test/",
+        "max_concurrent_task_count" : 1000,
+        "number_of_human_workers" : 1,
+        "task_availability_lifetime" : 86400,
+        "task_time_limit" :28800,
+        "task_description" : "Draw boxes on the faces wearking masks",
+        "task_keywords" : ["BoundingBox"],
+        "task_title" : "MASK Detection Labelling",
+        "template_file_uri" : "s3://sixsense-organization-assets/ayush/labeling_job_test/labelling_test/instructions.template",
+        "output_dir" : "ayush/labeling_job_test/labelling_test/",
+        "job_name" : "automated-labelling-12Feb-v1"
     }
 
 
