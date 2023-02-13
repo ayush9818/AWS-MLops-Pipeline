@@ -19,9 +19,9 @@ class AWS_Job_Scheduler:
         """
         self.job_config = job_config
         self.job_name = f'{job_config.get("base_job_name")}-{time.strftime("%Y-%m-%d-%H-%M-%S", time.gmtime())}'
-        self.job_dir = os.path.join(job_config.get('job_dir'),self.job_name)
+        self.job_dir = f"s3://{job_config.get('bucket_name')}/{os.path.join(job_config.get('job_dir'),self.job_name)}"
         self.local_data_dir = job_config.get('data_dir')
-        self.data_prefix = self.job_dir
+        self.data_prefix = f"{job_config.get('job_dir')}/{os.path.join(job_config.get('job_dir'),self.job_name)}"
         logger.info(f"Job Configuration : {self.job_config}")
         logger.info(f"Job Name : {self.job_name}, Job Directory : {self.job_dir}")
 
@@ -33,7 +33,7 @@ class AWS_Job_Scheduler:
             role=self.job_config.get('aws_role'),
             image_uri=self.job_config.get('ecr_image_uri'),
             output_path=self.job_dir,
-            checkpoint_s3_uri='{}/{}/{}'.format(self.job_dir, 'checkpoints'),
+            checkpoint_s3_uri='{}/{}/'.format(self.job_dir, 'checkpoints'),
             instance_count=self.job_config.get('instance_count'),
             instance_type=self.job_config.get('instance_type')
         )

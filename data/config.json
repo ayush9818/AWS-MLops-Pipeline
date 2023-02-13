@@ -1,0 +1,23 @@
+{
+    "data_config" : {
+        "input_dataset_path" : "ayush/labeling_job_test/labelling_test/automated-labelling-12Feb-v1/manifests/output/output.manifest",
+        "splt_dict" : {"train" : 0.8, "valid" : 0.2},
+        "dataset_save_dir" : "data/test1/",
+        "yaml_file_path" : "data/test1.yaml"
+
+    },
+
+    "aws_config" : {
+        "bucket_name" : "sixsense-organization-assets"
+    },
+    "model_config" : {
+        "model" : "yolov8n.pt",
+        "data" : "",
+        "epochs" : 1,
+        "batch" : -1,
+        "imgsz" : 640
+    },
+    "inference_config" : {
+        
+    }
+}
