@@ -1,0 +1,6 @@
+multi-model-server
+boto3
+sagemaker-inference
+retrying
+ultralytics
+loguru

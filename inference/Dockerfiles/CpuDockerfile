@@ -1,1 +1,22 @@
-# FOR CPU BASED INFERENCE
+## RUN THIS FIRST 
+## aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 763104351884.dkr.ecr.us-east-1.amazonaws.com
+# Reference : https://github.com/aws/deep-learning-containers/blob/master/available_images.md
+
+FROM 763104351884.dkr.ecr.us-east-1.amazonaws.com/pytorch-inference:1.9.1-cpu-py38-ubuntu20.04
+LABEL com.amazonaws.sagemaker.capabilities.accept-bind-to-port=true
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+RUN update-alternatives --install /usr/local/bin/pip pip /usr/local/bin/pip3 1
+COPY dockerd-entrypoint.py /usr/local/bin/dockerd-entrypoint.py
+RUN chmod +x /usr/local/bin/dockerd-entrypoint.py
+
+RUN mkdir -p /home/model-server/
+
+COPY . /home/model-server
+COPY config.properties   /home/model-server/config.properties
+COPY requirements.txt   /home/model-server/requirements.txt
+
+RUN pip3 --no-cache-dir install --default-timeout=100 -r /home/model-server/requirements.txt
+
+RUN pip3 install numpy --upgrade
+ENTRYPOINT ["python", "/usr/local/bin/dockerd-entrypoint.py"]
+CMD ["serve"]
