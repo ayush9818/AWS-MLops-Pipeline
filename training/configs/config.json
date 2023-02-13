@@ -1,23 +1,34 @@
 {
-    "data_config" : {
-        "input_dataset_path" : "configs/output.manifest",
-        "splt_dict" : {"train" : 0.8, "valid" : 0.2},
-        "dataset_save_dir" : "data/test1/",
-        "yaml_file_path" : "data/test1.yaml"
-
+    "data_config": {
+        "input_dataset_path": "configs/output.manifest",
+        "splt_dict": {
+            "train": 0.8,
+            "valid": 0.2
+        },
+        "dataset_save_dir": "data/test1/",
+        "yaml_file_path": "data/test1.yaml",
+        "model_dir": "data/model/"
     },
-
-    "aws_config" : {
-        "bucket_name" : "sixsense-organization-assets"
+    "aws_config": {
+        "bucket_name": "sixsense-organization-assets"
     },
-    "model_config" : {
-        "model" : "yolov8n.pt",
-        "data" : "",
-        "epochs" : 1,
-        "batch" : -1,
-        "imgsz" : 640
+    "model_config": {
+        "model": "yolov8n.pt",
+        "data": "",
+        "epochs": 1,
+        "batch": -1,
+        "imgsz": 640
     },
-    "inference_config" : {
-        
+    "deploy_config": {
+        "deploy_dir": "ayush/labeling_job_test/training-test/",
+        "model_name": "local-test-model-v1"
+    },
+    "inference_config": {
+        "weights": "",
+        "params": {
+            "iou": 0.7,
+            "augment": true
+        }
+       
     }
 }
