@@ -24,7 +24,6 @@ Cloning the repository and setting up virtual environment
 - Inference using Real Time Endpoint
 
 
-
 ## Run Locally
 
 ### Labelling Job
@@ -94,4 +93,11 @@ Cloning the repository and setting up virtual environment
 #### Deleting the Endpoint Resources 
 ```bash
   python inference_resources.py --cfg configs/endpoint_config.json --action delete_endpoint
+```
+
+### Model Inference 
+- Create a inference config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/inference_config.json). Parameters Reference : Link
+```bash
+  cd AWS-MLops-Pipeline
+  python invoke_endpoint.py --cfg configs/inference_config.json
 ```
