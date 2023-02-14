@@ -25,79 +25,90 @@ Cloning the repository and setting up virtual environment
 
 
 ## Run Locally
+<details>
+  <summary>Click me</summary>
+  
+  ### Labelling Job
 
-### Labelling Job
+  - Upload the Labelling Template [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/labelling/configs/instructions.template) on s3 
 
-- Upload the Labelling Template [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/labelling/configs/instructions.template) on s3 
-- Update the config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/labelling/configs/labelling_config.json). Config parameters reference : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/wiki/Sagemaker-Labelling-Jobs#parameters-description-) 
-- To create a labelling job, run the following commands
+  - Update the config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/labelling/configs/labelling_config.json). Config parameters reference : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/wiki/Sagemaker-Labelling-Jobs#parameters-description-) 
+  - To create a labelling job, run the following commands
 
+    ```bash
+      cd labelling
+      python create_labelling_job.py --cfg configs/labelling_config.json
+    ```
+  - Now worker will be assigned a labelling job, once the worker complete the task, an output.manifest file will be written on s3 which will be used for model training.
+  ----
+
+  ### Training Job 
+
+  #### Building Training Container Image in local
+  - Use GPU base image to enable GPU support.
   ```bash
-    cd labelling
-    python create_labelling_job.py --cfg configs/labelling_config.json
+    cd training
+    docker build -f Dockerfiles/AwsCPUDockerfile -t <image_name> .
   ```
-- Now worker will be assigned a labelling job, once the worker complete the task, an output.manifest file will be written on s3 which will be used for model training.
+  #### Pushing the image to ECR
+  - Need to add ECR FullAccessRole Policy in Sagemaker IAM Role
+  - Login into ECR repo using commands on ECR UI 
+  - To tag and push the image, run the following commands 
+  ```bash
+    docker tag <image_name> <ecr_repo_uri>:<tag_name>
+    docker push <ecr_repo_uri>:<tag_name>
+  ```
 
-### Training Job 
+  #### Creating a Training Job on  Sagemaker
 
-#### Building Training Container Image in local
-- Use GPU base image to enable GPU support.
-```bash
-  cd training
-  docker build -f Dockerfiles/AwsCPUDockerfile -t <image_name> .
-```
-#### Pushing the image to ECR
-- Need to add ECR FullAccessRole Policy in Sagemaker IAM Role
-- Login into ECR repo using commands on ECR UI 
-- To tag and push the image, run the following commands 
-```bash
-  docker tag <image_name> <ecr_repo_uri>:<tag_name>
-  docker push <ecr_repo_uri>:<tag_name>
-```
+  - Prepare a Job Config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/job_config.json). Parameters Reference : Link
+  - Prepare a Train Config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/training/configs/config.json). Parameters Reference : Link
+  - To create a training job, run the following commands
+  ```bash
+    cd AWS-MLops-Pipeline
+    python create_training_job.py --cfg configs/job_config.json
+  ```
+  ----
 
-#### Creating a Training Job on  Sagemaker
+  ### Endpoint Deployment
+  #### Building Inference Container Image in local
+  - Use GPU base image to enable GPU support.
+  ```bash
+    cd inference
+    aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 763104351884.dkr.ecr.us-east-1.amazonaws.com
+    docker build -f Dockerfiles/CpuDockerfile -t <image_name> .
+  ```
+  #### Pushing the image to ECR
+  - Need to add ECR FullAccessRole Policy in Sagemaker IAM Role
+  - Login into ECR repo using commands on ECR UI 
+  - To tag and push the image, run the following commands 
+  ```bash
+    docker tag <image_name> <ecr_repo_uri>:<tag_name>
+    docker push <ecr_repo_uri>:<tag_name>
+  ```
 
-- Prepare a Job Config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/job_config.json). Parameters Reference : Link
-- Prepare a Train Config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/training/configs/config.json). Parameters Reference : Link
-- To create a training job, run the following commands
-```bash
-  cd AWS-MLops-Pipeline
-  python create_training_job.py --cfg configs/job_config.json
-```
+  #### Creating a Real Time Endpoint
+  - Prepare an endpoint config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/endpoint_config.json). Parameters Reference : Link
+  - To create an inference endpoint, run the following commands
+  ```bash
+    cd AWS-MLops-Pipeline
+    python inference_resources.py --cfg configs/endpoint_config.json --action create_endpoint
+  ```
 
-### Endpoint Deployment
-#### Building Inference Container Image in local
-- Use GPU base image to enable GPU support.
-```bash
-  cd inference
-  aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 763104351884.dkr.ecr.us-east-1.amazonaws.com
-  docker build -f Dockerfiles/CpuDockerfile -t <image_name> .
-```
-#### Pushing the image to ECR
-- Need to add ECR FullAccessRole Policy in Sagemaker IAM Role
-- Login into ECR repo using commands on ECR UI 
-- To tag and push the image, run the following commands 
-```bash
-  docker tag <image_name> <ecr_repo_uri>:<tag_name>
-  docker push <ecr_repo_uri>:<tag_name>
-```
+  #### Deleting the Endpoint Resources 
+  ```bash
+    python inference_resources.py --cfg configs/endpoint_config.json --action delete_endpoint
+  ```
+  ----
+  ### Model Inference 
+  - Create a inference config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/inference_config.json). Parameters Reference : Link
+  ```bash
+    cd AWS-MLops-Pipeline
+    python invoke_endpoint.py --cfg configs/inference_config.json
+  ```
+</details>
 
-#### Creating a Real Time Endpoint
-- Prepare an endpoint config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/endpoint_config.json). Parameters Reference : Link
-- To create an inference endpoint, run the following commands
-```bash
-  cd AWS-MLops-Pipeline
-  python inference_resources.py --cfg configs/endpoint_config.json --action create_endpoint
-```
+## Authors
 
-#### Deleting the Endpoint Resources 
-```bash
-  python inference_resources.py --cfg configs/endpoint_config.json --action delete_endpoint
-```
+- [Ayush Agarwal](https://www.github.com/ayush9818)
 
-### Model Inference 
-- Create a inference config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/inference_config.json). Parameters Reference : Link
-```bash
-  cd AWS-MLops-Pipeline
-  python invoke_endpoint.py --cfg configs/inference_config.json
-```
