@@ -1,5 +1,5 @@
 
-# Sagemaker MlOps Pipeline
+# Sagemaker MLOps Pipeline
 
 An end to end pipeline for labeling, training and deployment of an object detection model.
 
@@ -64,4 +64,34 @@ Cloning the repository and setting up virtual environment
 ```bash
   cd AWS-MLops-Pipeline
   python create_training_job.py --cfg configs/job_config.json
+```
+
+### Endpoint Deployment
+#### Building Inference Container Image in local
+- Use GPU base image to enable GPU support.
+```bash
+  cd inference
+  aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 763104351884.dkr.ecr.us-east-1.amazonaws.com
+  docker build -f Dockerfiles/CpuDockerfile -t <image_name> .
+```
+#### Pushing the image to ECR
+- Need to add ECR FullAccessRole Policy in Sagemaker IAM Role
+- Login into ECR repo using commands on ECR UI 
+- To tag and push the image, run the following commands 
+```bash
+  docker tag <image_name> <ecr_repo_uri>:<tag_name>
+  docker push <ecr_repo_uri>:<tag_name>
+```
+
+#### Creating a Real Time Endpoint
+- Prepare an endpoint config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/endpoint_config.json). Parameters Reference : Link
+- To create an inference endpoint, run the following commands
+```bash
+  cd AWS-MLops-Pipeline
+  python inference_resources.py --cfg configs/endpoint_config.json --action create_endpoint
+```
+
+#### Deleting the Endpoint Resources 
+```bash
+  python inference_resources.py --cfg configs/endpoint_config.json --action delete_endpoint
 ```
