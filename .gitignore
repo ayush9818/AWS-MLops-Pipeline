@@ -8,6 +8,7 @@ __pycache__/
 training/data
 training/runs
 training/yolov8n.pt
+.vscode
 # Distribution / packaging
 .Python
 build/
