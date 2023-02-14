@@ -61,8 +61,8 @@ Cloning the repository and setting up virtual environment
 
   #### Creating a Training Job on  Sagemaker
 
-  - Prepare a Job Config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/job_config.json). Parameters Reference : Link
-  - Prepare a Train Config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/data/config.json). Parameters Reference : Link
+  - Prepare a Job Config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/job_config.json). Parameters Reference : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/wiki/Sagemaker-Training-Jobs#parameters-description-for-job-config-)
+  - Prepare a Train Config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/data/config.json). Parameters Reference : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/wiki/Sagemaker-Training-Jobs#parameters-description-for-train-config-)
   - To create a training job, run the following commands
   ```bash
     cd AWS-MLops-Pipeline
@@ -88,7 +88,7 @@ Cloning the repository and setting up virtual environment
   ```
 
   #### Creating a Real Time Endpoint
-  - Prepare an endpoint config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/endpoint_config.json). Parameters Reference : Link
+  - Prepare an endpoint config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/endpoint_config.json). Parameters Reference : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/wiki/Sagemaker-Inference#parameters-description-of-endpoint_config)
   - To create an inference endpoint, run the following commands
   ```bash
     cd AWS-MLops-Pipeline
@@ -101,7 +101,7 @@ Cloning the repository and setting up virtual environment
   ```
   ----
   ### Model Inference 
-  - Create a inference config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/inference_config.json). Parameters Reference : Link
+  - Create a inference config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/inference_config.json). Parameters Reference : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/wiki/Sagemaker-Inference#parameters-description-of-inference_config)
   ```bash
     cd AWS-MLops-Pipeline
     python invoke_endpoint.py --cfg configs/inference_config.json
