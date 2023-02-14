@@ -39,3 +39,29 @@ Cloning the repository and setting up virtual environment
   ```
 - Now worker will be assigned a labelling job, once the worker complete the task, an output.manifest file will be written on s3 which will be used for model training.
 
+### Training Job 
+
+#### Building Training Container Image in local
+- Use GPU base image to enable GPU support.
+```bash
+  cd training
+  docker build -f Dockerfiles/AwsCPUDockerfile -t <image_name> .
+```
+#### Pushing the image to ECR
+- Need to add ECR FullAccessRole Policy in Sagemaker IAM Role
+- Login into ECR repo using commands on ECR UI 
+- To tag and push the image, run the following commands 
+```bash
+  docker tag <image_name> <ecr_repo_uri>:<tag_name>
+  docker push <ecr_repo_uri>:<tag_name>
+```
+
+#### Creating a Training Job on  Sagemaker
+
+- Prepare a Job Config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/job_config.json). Parameters Reference : Link
+- Prepare a Train Config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/training/configs/config.json). Parameters Reference : Link
+- To create a training job, run the following commands
+```bash
+  cd AWS-MLops-Pipeline
+  python create_training_job.py --cfg configs/job_config.json
+```
