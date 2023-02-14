@@ -62,7 +62,7 @@ Cloning the repository and setting up virtual environment
   #### Creating a Training Job on  Sagemaker
 
   - Prepare a Job Config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/job_config.json). Parameters Reference : Link
-  - Prepare a Train Config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/training/configs/config.json). Parameters Reference : Link
+  - Prepare a Train Config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/data/config.json). Parameters Reference : Link
   - To create a training job, run the following commands
   ```bash
     cd AWS-MLops-Pipeline
