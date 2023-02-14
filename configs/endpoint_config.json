@@ -1,14 +1,14 @@
 {
-    "region" : "ap-southeast-1",
-    "iam_role" : "arn:aws:iam::050381676378:role/service-role/AmazonSageMaker-ExecutionRole-20230210T000573",
-    "bucket_name" : "sixsense-organization-assets",
-    "model_dir" : "ayush/labeling_job_test/training-test",
-    "model_path" : "test-model-13Feb-v2.tar.gz",
-    "container_uri" : "050381676378.dkr.ecr.ap-southeast-1.amazonaws.com/ayush-test:inference",
-    "endpoint_name" : "real-time-v1",
-    "model_name" : "real-time-v1",
-    "config_name" : "real-time-v1",
-    "instance_count" : 1,
-    "instance_type" : "ml.m4.xlarge",
-    "model_uri" : "s3://sixsense-organization-assets/ayush/labeling_job_test/training-test/test-model-13Feb-v2.tar.gz"
+    "region": "ap-southeast-1",
+    "iam_role": "arn:aws:iam::050381676378:role/service-role/AmazonSageMaker-ExecutionRole-20230210T000573",
+    "bucket_name": "sixsense-organization-assets",
+    "model_dir": "ayush/labeling_job_test/training-test",
+    "model_path": "test-model-13Feb-v2.tar.gz",
+    "container_uri": "050381676378.dkr.ecr.ap-southeast-1.amazonaws.com/ayush-test:inference",
+    "endpoint_name": "real-time-v1",
+    "model_name": "real-time-v1",
+    "config_name": "real-time-v1",
+    "instance_count": 1,
+    "instance_type": "ml.m4.xlarge",
+    "model_uri": "s3://sixsense-organization-assets/ayush/labeling_job_test/training-test/test-model-13Feb-v2.tar.gz"
 }

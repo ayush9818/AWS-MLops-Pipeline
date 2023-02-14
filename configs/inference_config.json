@@ -1,5 +1,5 @@
 {
-    "region" : "ap-southeast-1",
-    "endpoint_name" : "real-time-v1",
+    "region": "ap-southeast-1",
+    "endpoint_name": "real-time-v1",
     "payload_path": "inference/sample_files/payload.json"
 }

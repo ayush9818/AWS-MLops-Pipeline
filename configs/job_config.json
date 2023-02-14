@@ -1,10 +1,10 @@
 {
-    "bucket_name" : "sixsense-organization-assets",
-    "aws_role" : "arn:aws:iam::050381676378:role/service-role/AmazonSageMaker-ExecutionRole-20230210T000573",
-    "ecr_image_uri" : "050381676378.dkr.ecr.ap-southeast-1.amazonaws.com/ayush-test:latest",
-    "instance_count" : 1,
-    "instance_type" : "ml.m4.xlarge",
-    "data_dir" : "data/",
-    "base_job_name" : "training-test-13Feb2022-v2",
-    "job_dir" : "ayush/labeling_job_test/training-test"
+    "bucket_name": "sixsense-organization-assets",
+    "aws_role": "arn:aws:iam::050381676378:role/service-role/AmazonSageMaker-ExecutionRole-20230210T000573",
+    "ecr_image_uri": "050381676378.dkr.ecr.ap-southeast-1.amazonaws.com/ayush-test:latest",
+    "instance_count": 1,
+    "instance_type": "ml.m4.xlarge",
+    "data_dir": "data/",
+    "base_job_name": "training-test-13Feb2022-v2",
+    "job_dir": "ayush/labeling_job_test/training-test"
 }
