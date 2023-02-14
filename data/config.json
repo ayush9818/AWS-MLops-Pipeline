@@ -3,7 +3,8 @@
         "input_dataset_path" : "ayush/labeling_job_test/labelling_test/automated-labelling-12Feb-v1/manifests/output/output.manifest",
         "splt_dict" : {"train" : 0.8, "valid" : 0.2},
         "dataset_save_dir" : "data/test1/",
-        "yaml_file_path" : "data/test1.yaml"
+        "yaml_file_path" : "data/test1.yaml",
+        "model_dir": "data/model/"
 
     },
 
@@ -17,7 +18,16 @@
         "batch" : -1,
         "imgsz" : 640
     },
-    "inference_config" : {
-        
+    "deploy_config": {
+        "deploy_dir": "ayush/labeling_job_test/training-test/",
+        "model_name": "test-model-13Feb-v2"
+    },
+    "inference_config": {
+        "weights": "",
+        "params": {
+            "iou": 0.7,
+            "augment": true
+        }
+       
     }
 }

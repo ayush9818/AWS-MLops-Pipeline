@@ -23,8 +23,10 @@ class ModelHandler(object):
         properties = context.system_properties
         model_dir = properties.get("model_dir")
         gpu_id = properties.get("gpu_id")
+        
+        logger.info(f"ModelDir={model_dir}")
         model_path = os.path.join(model_dir, 'model.json')
-        logger.info(f"ModelDir={model_dir} ModelPath={model_path}")
+        logger.info(f"ModelPath={model_path}")
 
         self.model_dict=json.load(open(model_path))
         self.model_dict['weights'] = os.path.join(model_dir, self.model_dict.get('weights'))
@@ -77,7 +79,7 @@ class ModelHandler(object):
 
         self.model_dict['params']['conf'] = conf
         self.model_dict['params']['device'] = device
-        model_output = self.model.predict(image_path, **self.model_dict.get('params'))
+        model_output = self.model.predict(local_path, **self.model_dict.get('params'))
         model_output = self.format_output(model_output)
         image_dict['results'] = model_output
 

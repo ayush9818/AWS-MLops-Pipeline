@@ -21,7 +21,7 @@ class AWS_Job_Scheduler:
         self.job_name = f'{job_config.get("base_job_name")}-{time.strftime("%Y-%m-%d-%H-%M-%S", time.gmtime())}'
         self.job_dir = f"s3://{job_config.get('bucket_name')}/{os.path.join(job_config.get('job_dir'),self.job_name)}"
         self.local_data_dir = job_config.get('data_dir')
-        self.data_prefix = f"{job_config.get('job_dir')}/{os.path.join(job_config.get('job_dir'),self.job_name)}"
+        self.data_prefix = f"{job_config.get('job_dir')}/{self.job_name}"
         logger.info(f"Job Configuration : {self.job_config}")
         logger.info(f"Job Name : {self.job_name}, Job Directory : {self.job_dir}")
 
