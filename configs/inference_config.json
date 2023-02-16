@@ -1,5 +1,13 @@
 {
-    "region": "ap-southeast-1",
-    "endpoint_name": "real-time-v1",
-    "payload_path": "inference/sample_files/payload.json"
+    "real-time": {
+        "region": "ap-southeast-1",
+        "endpoint_name": "real-time-v1",
+        "payload_path": "inference/sample_files/payload.json"
+    },
+    "multi-model" : {
+        "region": "ap-southeast-1",
+        "endpoint_name": "real-time-v1",
+        "payload_path": "inference/sample_files/payload.json",
+        "target_model" : ""
+    }
 }
