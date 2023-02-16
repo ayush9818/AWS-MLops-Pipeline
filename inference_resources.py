@@ -7,8 +7,20 @@ import time
 sm_client = boto3.client(service_name="sagemaker", region_name="ap-southeast-1")
 
 
-def create_model(model_name, ecr_image, model_uri, role):
-    container = {"Image": ecr_image, "ModelDataUrl": model_uri, "Mode": "SingleModel"}
+def create_model(model_name, ecr_image, model_uri, role, multi_model=True):
+    if not multi_model:
+        container = {
+            "Image": ecr_image,
+            "ModelDataUrl": model_uri,
+            "Mode": "SingleModel",
+        }
+    else:
+        container = {
+            "Image": ecr_image,
+            "ModelDataUrl": model_uri,
+            "Mode": "MultiModel",
+        }
+
     response = sm_client.create_model(
         ModelName=model_name,
         ExecutionRoleArn=role,
@@ -79,26 +91,49 @@ if __name__ == "__main__":
         type=str,
         help="Supported Actions : create_endpoint, delete_endpoint",
     )
+    parser.add_argument(
+        "--endpoint-type",
+        type=str,
+        help="Supported Endpoint Types : real-time-endpoint, multi-model-endpoint",
+    )
     args = parser.parse_args()
 
     config_path = args.cfg
     action = args.action
+    endpoint_type = args.endpoint_type
 
     assert action in [
         "delete_endpoint",
         "create_endpoint",
     ], f"Supported Actions are : create_endpoint and delete_endpoint"
+
+    assert endpoint_type in [
+        "real-time-endpoint",
+        "multi-model-endpoint",
+    ], f"Supported Endpoint Types are : real-time-endpoint and multi-model-endpoint"
+
     assert os.path.exists(config_path), f"{config_path} does not exist"
 
-    endpoint_config = json.load(open(config_path))
+    endpoint_master_config = json.load(open(config_path))
+    endpoint_config = endpoint_master_config.get(endpoint_type)
 
     if action == "create_endpoint":
-        create_model(
-            model_name=endpoint_config.get("model_name"),
-            ecr_image=endpoint_config.get("container_uri"),
-            model_uri=endpoint_config.get("model_uri"),
-            role=endpoint_config.get("iam_role"),
-        )
+        if endpoint_type == "real-time-endpoint":
+            create_model(
+                model_name=endpoint_config.get("model_name"),
+                ecr_image=endpoint_config.get("container_uri"),
+                model_uri=endpoint_config.get("model_uri"),
+                role=endpoint_config.get("iam_role"),
+                multi_model=False
+            )
+        else:
+            create_model(
+                model_name=endpoint_config.get("model_name"),
+                ecr_image=endpoint_config.get("container_uri"),
+                model_uri=endpoint_config.get("model_uri"),
+                role=endpoint_config.get("iam_role"),
+                multi_model=True
+            )
         create_config(
             model_name=endpoint_config.get("model_name"),
             config_name=endpoint_config.get("config_name"),
