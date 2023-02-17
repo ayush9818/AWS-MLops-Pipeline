@@ -29,20 +29,53 @@ def create_model(model_name, ecr_image, model_uri, role, multi_model=True):
     print("{} Model Created".format(model_name))
 
 
-def create_config(model_name, config_name, instance_type, instance_count):
-    response = sm_client.create_endpoint_config(
-        EndpointConfigName=config_name,
-        ProductionVariants=[
-            {
-                "InstanceType": instance_type,
-                "InitialInstanceCount": instance_count,
-                "InitialVariantWeight": 1,
-                "ModelName": model_name,
-                "VariantName": "Variant1",
+def get_real_time_config(endpoint_config):
+    required_fields = ['instance_type', 'instance_count', 'model_name']
+    for field in required_fields:
+        assert field in endpoint_config, f"{field} missing in endpoint_config"
+    
+    config = {
+        "InstanceType": endpoint_config.get('instance_type'),
+        "InitialInstanceCount": endpoint_config.get('instance_count'),
+        "InitialVariantWeight": 1,
+        "ModelName": endpoint_config.get('model_name'),
+        "VariantName": "Variant1",
+        }
+    return config
+
+def get_serverless_config(endpoint_config):
+    required_fields = ['model_name', 'memory_size', 'max_concurrency']
+    for field in required_fields:
+        assert field in endpoint_config, f"{field} missing in endpoint_config"
+        
+    config = {
+        "ModelName": endpoint_config.get('model_name'),
+            "VariantName": "AllTraffic",
+            "ServerlessConfig": {
+                "MemorySizeInMB": endpoint_config.get('memory_size'),
+                "MaxConcurrency": endpoint_config.get('max_concurrency')
             }
+
+    }
+    return config
+    
+    
+
+def create_config(endpoint_config, real_time=True):
+    if real_time:
+        print(f"Creating ProductConfig for RealTime Inference")
+        product_config = get_real_time_config(endpoint_config)
+    else:
+        print(f"Creating ProductConfig for ServerLess Inference")
+        product_config = get_serverless_config(endpoint_config)
+    response = sm_client.create_endpoint_config(
+        EndpointConfigName=endpoint_config.get('config_name'),
+        ProductionVariants=[
+            product_config
         ],
     )
-    print("{} Config Created".format(config_name))
+    print("{} Config Created".format(endpoint_config.get('config_name')))
+    
 
 
 def create_endpoint(endpoint_name, config_name):
@@ -94,7 +127,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--endpoint-type",
         type=str,
-        help="Supported Endpoint Types : real-time-endpoint, multi-model-endpoint",
+        help="Supported Endpoint Types : real-time-endpoint, multi-model-endpoint", "serverless-endpoint"
     )
     args = parser.parse_args()
 
@@ -110,6 +143,7 @@ if __name__ == "__main__":
     assert endpoint_type in [
         "real-time-endpoint",
         "multi-model-endpoint",
+        "serverless-endpoint",
     ], f"Supported Endpoint Types are : real-time-endpoint and multi-model-endpoint"
 
     assert os.path.exists(config_path), f"{config_path} does not exist"
@@ -118,7 +152,7 @@ if __name__ == "__main__":
     endpoint_config = endpoint_master_config.get(endpoint_type)
 
     if action == "create_endpoint":
-        if endpoint_type == "real-time-endpoint":
+        if endpoint_type in ["real-time-endpoint","serverless-endpoint"]:
             create_model(
                 model_name=endpoint_config.get("model_name"),
                 ecr_image=endpoint_config.get("container_uri"),
@@ -134,13 +168,12 @@ if __name__ == "__main__":
                 role=endpoint_config.get("iam_role"),
                 multi_model=True
             )
-        create_config(
-            model_name=endpoint_config.get("model_name"),
-            config_name=endpoint_config.get("config_name"),
-            instance_type=endpoint_config.get("instance_type"),
-            instance_count=endpoint_config.get("instance_count"),
-        )
-
+            
+        if endpoint_type in ["real-time-endpoint","multi-model-endpoint"]:
+            create_config(endpoint_config,real_time=True)
+        else:
+            create_config(endpoint_config,real_time=False)
+            
         create_endpoint(
             endpoint_name=endpoint_config.get("endpoint_name"),
             config_name=endpoint_config.get("config_name"),

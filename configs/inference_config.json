@@ -1,13 +1,18 @@
 {
-    "real-time": {
+    "real-time-endpoint": {
         "region": "ap-southeast-1",
         "endpoint_name": "real-time-v1",
         "payload_path": "inference/sample_files/payload.json"
     },
-    "multi-model" : {
+    "multi-model-endpoint" : {
         "region": "ap-southeast-1",
         "endpoint_name": "real-time-v1",
         "payload_path": "inference/sample_files/payload.json",
         "target_model" : ""
+    }
+    "serverless-endpoint" : {
+        "region": "ap-southeast-1",
+        "endpoint_name": "serverless-v2",
+        "payload_path": "inference/sample_files/payload.json"
     }
 }
