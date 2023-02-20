@@ -8,7 +8,7 @@ import argparse
 
 
 class AWS_Job_Scheduler:
-    """Schedule Sagemaker Training Jobs"""
+    """Schedule On Demand Sagemaker Training Jobs"""
 
     def __init__(self, job_config):
         """

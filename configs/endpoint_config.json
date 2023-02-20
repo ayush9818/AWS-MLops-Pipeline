@@ -11,7 +11,13 @@
         "config_name": "real-time-v1",
         "instance_count": 1,
         "instance_type": "ml.m4.xlarge",
-        "model_uri": "s3://sixsense-organization-assets/ayush/labeling_job_test/training-test/test-model-13Feb-v2.tar.gz"
+        "model_uri": "s3://sixsense-organization-assets/ayush/labeling_job_test/training-test/test-model-13Feb-v2.tar.gz",
+        "data_capture_config" : {
+            "enable_capture" : true,
+            "sampling_percentage" : 100,
+            "s3_capture_upload_path" : "s3://sixsense-organization-assets/ayush/labeling_job_test/training-test/" ,
+            "capture_modes" :  [ "Input",  "Output" ]
+        }
     },
     "multi-model-endpoint" : {
         "region": "ap-southeast-1",
