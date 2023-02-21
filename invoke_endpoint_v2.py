@@ -17,6 +17,16 @@ def invoke_real_time_endpoint(inference_config):
     result = predictor.predict(payload)
     print(result)
 
+def invoke_multi_time_endpoint(inference_config):
+    endpoint_name=inference_config.get('endpoint_name')
+    predictor = Predictor(endpoint_name=endpoint_name,
+                        serializer=JSONSerializer(),
+                        deserializer=JSONDeserializer()
+                        )
+    payload = json.load(open(inference_config.get("payload_path")))
+    result = predictor.predict(payload,)
+    print(result)
+
 
 if __name__ == "__main__":
     

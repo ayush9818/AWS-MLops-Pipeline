@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
     if endpoint_type == "real-time-endpoint":
         invoke_real_time_endpoint(inference_config)
-    elif endpoint_type == "multi-model-endpoint"
+    elif endpoint_type == "multi-model-endpoint":
         invoke_multi_model_endpoint(inference_config)
     else:
         invoke_serverless_endpoint(inference_config)
