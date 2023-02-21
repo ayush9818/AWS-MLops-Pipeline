@@ -85,10 +85,10 @@ def create_config(endpoint_config, real_time, endpoint_type):
         endpoint_config: endpoint configuration provided by user
         real_time: Boolean to indicate whether to use [real-time, multi-model] endpoints if True otherwise serverless endpoints
     """
-    if real_time and endpoint_type == 'real-time-endpoint':
+    if real_time:
         print(f"Creating ProductConfig for RealTime Inference")
         product_config = get_real_time_config(endpoint_config)
-        if "data_capture_config" in endpoint_config:
+        if "data_capture_config" in endpoint_config and endpoint_type == 'real-time-endpoint':
             print(f"Data capture config Enabled")
             required_fields = [
                 "enable_capture",
