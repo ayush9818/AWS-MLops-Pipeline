@@ -76,16 +76,16 @@ def get_serverless_config(endpoint_config):
     return config
 
 
-def create_config(endpoint_config, real_time=True):
+def create_config(endpoint_config, real_time, endpoint_type):
     """
     - Master function to create endpoint configuration.
-    - This function will enable data_capture for real-time and multi-model endpoints if data_capture_config is present
-    - Data Capture is not supported for serverless endpoints
+    - This function will enable data_capture for real-time if data_capture_config is present
+    - Data Capture is not supported for serverless and multi-model endpoints
     parameters:
         endpoint_config: endpoint configuration provided by user
         real_time: Boolean to indicate whether to use [real-time, multi-model] endpoints if True otherwise serverless endpoints
     """
-    if real_time:
+    if real_time and endpoint_type == 'real-time-endpoint':
         print(f"Creating ProductConfig for RealTime Inference")
         product_config = get_real_time_config(endpoint_config)
         if "data_capture_config" in endpoint_config:
@@ -235,10 +235,10 @@ if __name__ == "__main__":
 
         if endpoint_type in ["real-time-endpoint", "multi-model-endpoint"]:
             # This will create endpoint configuration for real-time and multi-model endpoints
-            create_config(endpoint_config, real_time=True)
+            create_config(endpoint_config, real_time=True, endpoint_type=endpoint_type)
         else:
             # This will create endpoint configuration for serverless endpoints
-            create_config(endpoint_config, real_time=False)
+            create_config(endpoint_config, real_time=False, endpoint_type=endpoint_type)
 
         create_endpoint(
             endpoint_name=endpoint_config.get("endpoint_name"),
