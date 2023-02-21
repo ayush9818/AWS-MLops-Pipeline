@@ -37,7 +37,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--endpoint-type",
         type=str,
-        help="Supported Endpoint Types : real-time-endpoint, multi-model-endpoint"
+        help="Supported Endpoint Types : real-time-endpoint, multi-model-endpoint, serverless-endpoint"
     )
     #multi-model-endpoint","serverless-endpoint",
     #TODO : Need to Test for Multi-Model Endpoint
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     assert endpoint_type in [
         "real-time-endpoint",
         "multi-model-endpoint",
-        #"serverless-endpoint"
+        "serverless-endpoint"
     ], f"Supported Endpoint Types are : real-time and multi-model"
     assert os.path.exists(config_path), f"{config_path} does not exist"
 
