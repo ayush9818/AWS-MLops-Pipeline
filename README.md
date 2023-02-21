@@ -105,7 +105,11 @@ Cloning the repository and setting up virtual environment
   - Create a inference config : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/inference_config.json). Parameters Reference : [Link](https://github.com/ayush9818/AWS-MLops-Pipeline/wiki/Sagemaker-Inference#parameters-description-of-inference_config)
   ```bash
     cd AWS-MLops-Pipeline
-    python invoke_endpoint.py --cfg configs/inference_config.json
+    ## This script enables Data Capture for Real Time Endpoints and uses Sagemaker Predictor class
+    python invoke_endpoint_v2.py --cfg configs/inference_config.json --endpoint-type real-time-endpoint/multi-model-endpoint/serverless-endpoint
+
+    ## This script is based on invoking endpoints using Boto3 and do not enable Data Capture for Real Time Endpoints
+    python invoke_endpoint.py --cfg configs/inference_config.json --endpoint-type real-time-endpoint/multi-model-endpoint/serverless-endpoint
   ```
 </details>
 
