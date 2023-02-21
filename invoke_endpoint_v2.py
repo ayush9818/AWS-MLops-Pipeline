@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     inference_config = json.load(open(config_path)).get(endpoint_type)
 
-    if endpoint_type == "real-time-endpoint":
+    if endpoint_type in ["real-time-endpoint", "serverless-endpoint"]:
         invoke_real_time_endpoint(inference_config)
     elif endpoint_type == "multi-model-endpoint":
         invoke_multi_time_endpoint(inference_config)
