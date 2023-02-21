@@ -3,7 +3,7 @@
 
 An end to end pipeline for labeling, training and deployment of an object detection model.
 
-![Image](https://github.com/ayush9818/AWS-MLops-Pipeline/blob/main/configs/flow_chart.png)
+![image](./configs/flowchart.png)
 
 ## Installation
 
