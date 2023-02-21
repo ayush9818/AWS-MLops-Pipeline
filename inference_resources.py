@@ -218,6 +218,7 @@ if __name__ == "__main__":
 
     if action == "create_endpoint":
         if endpoint_type in ["real-time-endpoint", "serverless-endpoint"]:
+            ## This will create Model Object for real-time and serverless endpoints
             create_model(
                 model_name=endpoint_config.get("model_name"),
                 ecr_image=endpoint_config.get("container_uri"),
@@ -226,6 +227,7 @@ if __name__ == "__main__":
                 multi_model=False,
             )
         else:
+            ## This will create Model Object for multi-model endpoints
             create_model(
                 model_name=endpoint_config.get("model_name"),
                 ecr_image=endpoint_config.get("container_uri"),
@@ -235,8 +237,10 @@ if __name__ == "__main__":
             )
 
         if endpoint_type in ["real-time-endpoint", "multi-model-endpoint"]:
+            # This will create endpoint configuration for real-time and multi-model endpoints
             create_config(endpoint_config, real_time=True)
         else:
+            # This will create endpoint configuration for serverless endpoints
             create_config(endpoint_config, real_time=False)
 
         create_endpoint(
