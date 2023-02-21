@@ -14,7 +14,7 @@ def create_model(model_name, ecr_image, model_uri, role, multi_model=True):
      - ecr_image : ECR Image to be used for Inference
      - model_uri : s3 directory containing all the model artifacts in case of multi-model otherwise s3 path of model artifacts
      - Mode : SingleModel | MultiModel
-    additional parameters : 
+    additional parameters :
         - role : iam role to be used
         - multi_model : Boolean to indicate whether to use multi-model or single model
     """
@@ -78,11 +78,11 @@ def get_serverless_config(endpoint_config):
 
 def create_config(endpoint_config, real_time=True):
     """
-    - Master function to create endpoint configuration. 
+    - Master function to create endpoint configuration.
     - This function will enable data_capture for real-time and multi-model endpoints if data_capture_config is present
-    - Data Capture is not supported for serverless endpoints 
-    parameters: 
-        endpoint_config: endpoint configuration provided by user 
+    - Data Capture is not supported for serverless endpoints
+    parameters:
+        endpoint_config: endpoint configuration provided by user
         real_time: Boolean to indicate whether to use [real-time, multi-model] endpoints if True otherwise serverless endpoints
     """
     if real_time:
@@ -101,12 +101,8 @@ def create_config(endpoint_config, real_time=True):
                 assert field in _temp_config, f"{field} missing in data_capture_config"
             data_capture_config = {
                 "EnableCapture": _temp_config.get("enable_capture"),
-                "InitialSamplingPercentage": _temp_config.get(
-                    "sampling_percentage"
-                ), 
-                "DestinationS3Uri": _temp_config.get(
-                    "s3_capture_upload_path"
-                ), 
+                "InitialSamplingPercentage": _temp_config.get("sampling_percentage"),
+                "DestinationS3Uri": _temp_config.get("s3_capture_upload_path"),
                 "CaptureOptions": [
                     {"CaptureMode": capture_mode}
                     for capture_mode in _temp_config.get("capture_modes")
@@ -155,11 +151,11 @@ def delete_resources(endpoint_name, config_name, model_name, aws_region):
     Function to delete endpoint related resources
      - endpoint
      - endpoint configuration
-     - model object 
+     - model object
      parameters:
         endpoint_name - name of the endpoint
         config_name - name of the endpoint configuration
-        model_name - name of the model object 
+        model_name - name of the model object
         aws_region - AWS region in which the endpoint is hosted
     """
     sagemaker_client = boto3.client("sagemaker", region_name=aws_region)
