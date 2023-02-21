@@ -53,7 +53,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--endpoint-type",
         type=str,
-        help="Supported Endpoint Types : real-time-endpoint, multi-model-endpoint","serverless-endpoint",
+        help="Supported Endpoint Types : real-time-endpoint, multi-model-endpoint,serverless-endpoint",
     )
     args = parser.parse_args()
 
