@@ -89,6 +89,7 @@ def create_config(endpoint_config, real_time=True):
         print(f"Creating ProductConfig for RealTime Inference")
         product_config = get_real_time_config(endpoint_config)
         if "data_capture_config" in endpoint_config:
+            print(f"Data capture config Enabled")
             required_fields = [
                 "enable_capture",
                 "sampling_percentage",
