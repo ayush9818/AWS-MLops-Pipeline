@@ -3,7 +3,7 @@
 
 An end to end pipeline for labeling, training and deployment of an object detection model.
 
-![diagram](/configs/flowchart.png)
+![diagram](https://user-images.githubusercontent.com/43469729/220429386-736fb222-abc8-44a6-bef0-012833dd6327.png)
 
 ## Installation
 
