@@ -93,12 +93,12 @@ Cloning the repository and setting up virtual environment
   - To create an inference endpoint, run the following commands
   ```bash
     cd AWS-MLops-Pipeline
-    python inference_resources.py --cfg configs/endpoint_config.json --action create_endpoint
+    python inference_resources.py --cfg configs/endpoint_config.json --action create_endpoint --endpoint-type real-time-endpoint/multi-model-endpoint/serverless-endpoint
   ```
 
   #### Deleting the Endpoint Resources 
   ```bash
-    python inference_resources.py --cfg configs/endpoint_config.json --action delete_endpoint
+    python inference_resources.py --cfg configs/endpoint_config.json --action delete_endpoint --endpoint-type real-time-endpoint/multi-model-endpoint/serverless-endpoint
   ```
   ----
   ### Model Inference 
