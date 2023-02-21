@@ -26,6 +26,10 @@ class AWS_Job_Scheduler:
         logger.info(f"Job Name : {self.job_name}, Job Directory : {self.job_dir}")
 
     def schedule_job(self):
+        """
+        - Uploads Data on S3 which is downloaded on Cloud Training Instance
+        - Creates an Estimator class to schedule Training Job on Sagemaker 
+        """
         sess = sage.Session(default_bucket=self.job_config.get("bucket_name"))
         data_location = sess.upload_data(
             self.local_data_dir, key_prefix=self.data_prefix
