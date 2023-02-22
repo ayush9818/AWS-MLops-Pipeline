@@ -60,6 +60,6 @@
         "instance_count": 1,
         "instance_type": "ml.m4.xlarge",
         "max_concurrent_invocations": 4,
-        "model_uri": "s3://sixsense-organization-assets/ayush/labeling_job_test/training-test/test-model-13Feb-v2.tar.gz",
+        "model_uri": "s3://sixsense-organization-assets/ayush/labeling_job_test/training-test/test-model-13Feb-v2.tar.gz"
     }
 }
