@@ -17,6 +17,19 @@ def create_model(model_name, ecr_image, model_uri, role, multi_model=True):
     additional parameters :
         - role : iam role to be used
         - multi_model : Boolean to indicate whether to use multi-model or single model
+
+    To change the default environment variables for async endpoint for timeouts and request/response size
+    edit the container :
+        container = {
+            "Image": ecr_image,
+            "ModelDataUrl": model_uri,
+            "Mode": "SingleModel",
+            'Environment': {
+                'TS_MAX_REQUEST_SIZE': '100000000',
+                'TS_MAX_RESPONSE_SIZE': '100000000',
+                'TS_DEFAULT_RESPONSE_TIMEOUT': '1000'
+            }
+        }
     """
     if not multi_model:
         container = {
@@ -76,7 +89,100 @@ def get_serverless_config(endpoint_config):
     return config
 
 
-def create_config(endpoint_config, real_time, endpoint_type):
+def get_data_capture_config(endpoint_config):
+    """
+    Create a data capture config
+    """
+    required_fields = [
+        "enable_capture",
+        "sampling_percentage",
+        "s3_capture_upload_path",
+        "capture_modes",
+    ]
+    _temp_config = endpoint_config.get("data_capture_config")
+    for field in required_fields:
+        assert field in _temp_config, f"{field} missing in data_capture_config"
+    data_capture_config = {
+        "EnableCapture": _temp_config.get("enable_capture"),
+        "InitialSamplingPercentage": _temp_config.get("sampling_percentage"),
+        "DestinationS3Uri": _temp_config.get("s3_capture_upload_path"),
+        "CaptureOptions": [
+            {"CaptureMode": capture_mode}
+            for capture_mode in _temp_config.get("capture_modes")
+        ],
+    }
+    return data_capture_config
+
+
+def create_config_util(
+    endpoint_config, product_config, async_config, data_capture_config
+):
+    if data_capture_config is not None:
+        """
+        If data_capture_config is not None, It is assumed that it is only real-time-endpoint.
+        So, not checking for async_config
+        """
+        print(f"Creating Config with data_capture enabled")
+        response = sm_client.create_endpoint_config(
+            EndpointConfigName=endpoint_config.get("config_name"),
+            DataCaptureConfig=data_capture_config,
+            ProductionVariants=[product_config],
+        )
+        return response
+    else:
+        """
+        if data_capture_config is None, then it can real-time, multi-model, serverless or async endpoint
+        So, we need to check for aysnc_config, endpoint-config will vary for async and will be same for rest
+        """
+        if async_config is None:
+            response = sm_client.create_endpoint_config(
+                EndpointConfigName=endpoint_config.get("config_name"),
+                ProductionVariants=[product_config],
+            )
+            return response
+        else:
+            print(f"Using Async Endpoint Configuration")
+            response = sm_client.create_endpoint_config(
+                EndpointConfigName=endpoint_config.get("config_name"),
+                ProductionVariants=[product_config],
+                AsyncInferenceConfig=async_config,
+            )
+            return response
+
+
+def get_async_config(endpoint_config):
+    """
+    This function will create a async configuration for async endpoint
+
+    For now, not configuring SNS Topic. Added for TODO
+    TODO : Configure SNS Success and Error Topic
+    The output config will look the following if we include SNS Configurations as well
+
+    "OutputConfig": {
+            "S3OutputPath": f"s3://{s3_bucket}/{bucket_prefix}/output",
+            "NotificationConfig": {
+                "SuccessTopic": "arn:aws:sns:aws-region:account-id:topic-name",
+                "ErrorTopic": "arn:aws:sns:aws-region:account-id:topic-name",
+            }
+        }
+    """
+    async_config = {
+        "OutputConfig": {
+            # Location to upload response outputs when no location is provided in the request.
+            "S3OutputPath": endpoint_config.get("s3_output_path")
+        },
+        "ClientConfig": {
+            # (Optional) Specify the max number of inflight invocations per instance
+            # If no value is provided, Amazon SageMaker will choose an optimal value for you
+            "MaxConcurrentInvocationsPerInstance": endpoint_config.get(
+                "max_concurrent_invocations", 4
+            )
+        },
+    }
+    return async_config
+
+
+def create_config(endpoint_config, endpoint_type):
     """
     - Master function to create endpoint configuration.
     - This function will enable data_capture for real-time if data_capture_config is present
@@ -84,47 +190,59 @@ def create_config(endpoint_config, real_time, endpoint_type):
     parameters:
         endpoint_config: endpoint configuration provided by user
         real_time: Boolean to indicate whether to use [real-time, multi-model] endpoints if True otherwise serverless endpoints
+
+    Refer to this link for detailed description of an endpoint-configuration for all types of endpoint
+     - https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateEndpointConfig.html
     """
-    if real_time:
-        print(f"Creating ProductConfig for RealTime Inference")
-        product_config = get_real_time_config(endpoint_config)
-        if "data_capture_config" in endpoint_config and endpoint_type == 'real-time-endpoint':
+    if endpoint_type == "real-time-endpoint":
+        if "data_capture_config" in endpoint_config:
             print(f"Data capture config Enabled")
-            required_fields = [
-                "enable_capture",
-                "sampling_percentage",
-                "s3_capture_upload_path",
-                "capture_modes",
-            ]
-            _temp_config = endpoint_config.get("data_capture_config")
-            for field in required_fields:
-                assert field in _temp_config, f"{field} missing in data_capture_config"
-            data_capture_config = {
-                "EnableCapture": _temp_config.get("enable_capture"),
-                "InitialSamplingPercentage": _temp_config.get("sampling_percentage"),
-                "DestinationS3Uri": _temp_config.get("s3_capture_upload_path"),
-                "CaptureOptions": [
-                    {"CaptureMode": capture_mode}
-                    for capture_mode in _temp_config.get("capture_modes")
-                ],
-            }
+            data_capture_config = get_data_capture_config(endpoint_config)
         else:
             data_capture_config = None
-    else:
-        print(f"Creating ProductConfig for ServerLess Inference")
-        product_config = get_serverless_config(endpoint_config)
-        data_capture_config = None
-
-    if data_capture_config is not None:
-        response = sm_client.create_endpoint_config(
-            EndpointConfigName=endpoint_config.get("config_name"),
-            DataCaptureConfig=data_capture_config,
-            ProductionVariants=[product_config],
+        product_config = get_real_time_config(endpoint_config)
+        async_config = None
+        response = create_config_util(
+            endpoint_config, product_config, async_config, data_capture_config
         )
+        print(f"Endpoint Configuration Created for {endpoint_type}")
+
+    elif endpoint_type == "multi-model-endpoint":
+        data_capture_config = None
+        product_config = get_real_time_config(endpoint_config)
+        async_config = None
+        response = create_config_util(
+            endpoint_config, product_config, async_config, data_capture_config
+        )
+        print(f"Endpoint Configuration Created for {endpoint_type}")
+
+    elif endpoint_type == "serverless-endpoint":
+        data_capture_config = None
+        product_config = get_serverless_config(endpoint_config)
+        async_config = None
+        response = create_config_util(
+            endpoint_config, product_config, async_config, data_capture_config
+        )
+        print(f"Endpoint Configuration Created for {endpoint_type}")
+
+    elif endpoint_type == "async-endpoint":
+        data_capture_config = None
+        product_config = get_real_time_config(endpoint_config)
+        async_config = get_async_config(endpoint_config)
+        response = create_config_util(
+            endpoint_config, product_config, async_config, data_capture_config
+        )
+        print(f"Endpoint Configuration Created for {endpoint_type}")
     else:
-        response = sm_client.create_endpoint_config(
-            EndpointConfigName=endpoint_config.get("config_name"),
-            ProductionVariants=[product_config],
+        supported_endpoints = [
+            "real-time-endpoint",
+            "multi-model-endpoint",
+            "async-endpoint",
+            "serverless-endpoint",
+        ]
+        supported_endpoints = ",".join(supported_endpoints)
+        raise Exception(
+            f"{endpoint_type} not supported. Currently Supporting : {supported_endpoints}"
         )
     print("{} Config Created".format(endpoint_config.get("config_name")))
 
@@ -232,14 +350,7 @@ if __name__ == "__main__":
                 role=endpoint_config.get("iam_role"),
                 multi_model=True,
             )
-
-        if endpoint_type in ["real-time-endpoint", "multi-model-endpoint"]:
-            # This will create endpoint configuration for real-time and multi-model endpoints
-            create_config(endpoint_config, real_time=True, endpoint_type=endpoint_type)
-        else:
-            # This will create endpoint configuration for serverless endpoints
-            create_config(endpoint_config, real_time=False, endpoint_type=endpoint_type)
-
+        create_config(endpoint_config, endpoint_type=endpoint_type)
         create_endpoint(
             endpoint_name=endpoint_config.get("endpoint_name"),
             config_name=endpoint_config.get("config_name"),

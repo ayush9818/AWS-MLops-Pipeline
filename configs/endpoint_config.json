@@ -1,5 +1,5 @@
 {
-    "real-time-endpoint" : {
+    "real-time-endpoint": {
         "region": "ap-southeast-1",
         "iam_role": "arn:aws:iam::050381676378:role/service-role/AmazonSageMaker-ExecutionRole-20230210T000573",
         "bucket_name": "sixsense-organization-assets",
@@ -12,14 +12,17 @@
         "instance_count": 1,
         "instance_type": "ml.m4.xlarge",
         "model_uri": "s3://sixsense-organization-assets/ayush/labeling_job_test/training-test/test-model-13Feb-v2.tar.gz",
-        "data_capture_config" : {
-            "enable_capture" : true,
-            "sampling_percentage" : 100,
-            "s3_capture_upload_path" : "s3://sixsense-organization-assets/ayush/labeling_job_test/training-test/" ,
-            "capture_modes" :  [ "Input",  "Output" ]
+        "data_capture_config": {
+            "enable_capture": true,
+            "sampling_percentage": 100,
+            "s3_capture_upload_path": "s3://sixsense-organization-assets/ayush/labeling_job_test/training-test/",
+            "capture_modes": [
+                "Input",
+                "Output"
+            ]
         }
     },
-    "multi-model-endpoint" : {
+    "multi-model-endpoint": {
         "region": "ap-southeast-1",
         "iam_role": "arn:aws:iam::050381676378:role/service-role/AmazonSageMaker-ExecutionRole-20230210T000573",
         "bucket_name": "sixsense-organization-assets",
@@ -31,18 +34,32 @@
         "instance_count": 1,
         "instance_type": "ml.m4.xlarge"
     },
-    "serverless-endpoint" : {
-        "region" : "ap-southeast-1",
-        "iam_role" : "arn:aws:iam::050381676378:role/service-role/AmazonSageMaker-ExecutionRole-20230210T000573",
-        "bucket_name" : "sixsense-organization-assets",
-        "container_uri" : "050381676378.dkr.ecr.ap-southeast-1.amazonaws.com/ayush-test:inference",
-        "endpoint_name" : "serverless-v2",
-        "model_name" : "serverless-v2",
-        "config_name" : "serverless-v2",
-        "instance_count" : 1,
-        "instance_type" : "ml.m4.xlarge",
-        "model_uri" : "s3://sixsense-organization-assets/ayush/labeling_job_test/training-test/test-model-13Feb-v2.tar.gz",
-        "memory_size" : 2048,
-        "max_concurrency" : 20
+    "serverless-endpoint": {
+        "region": "ap-southeast-1",
+        "iam_role": "arn:aws:iam::050381676378:role/service-role/AmazonSageMaker-ExecutionRole-20230210T000573",
+        "bucket_name": "sixsense-organization-assets",
+        "container_uri": "050381676378.dkr.ecr.ap-southeast-1.amazonaws.com/ayush-test:inference",
+        "endpoint_name": "serverless-v2",
+        "model_name": "serverless-v2",
+        "config_name": "serverless-v2",
+        "instance_count": 1,
+        "instance_type": "ml.m4.xlarge",
+        "model_uri": "s3://sixsense-organization-assets/ayush/labeling_job_test/training-test/test-model-13Feb-v2.tar.gz",
+        "memory_size": 2048,
+        "max_concurrency": 20
+    },
+    "async-endpoint": {
+        "region": "ap-southeast-1",
+        "iam_role": "arn:aws:iam::050381676378:role/service-role/AmazonSageMaker-ExecutionRole-20230210T000573",
+        "bucket_name": "sixsense-organization-assets",
+        "container_uri": "050381676378.dkr.ecr.ap-southeast-1.amazonaws.com/ayush-test:inference",
+        "s3_output_path": "s3://sixsense-organization-assets/ayush/labeling_job_test/training-test/async/output",
+        "endpoint_name": "async-v1",
+        "model_name": "async-v1",
+        "config_name": "async-v1",
+        "instance_count": 1,
+        "instance_type": "ml.m4.xlarge",
+        "max_concurrent_invocations": 4,
+        "model_uri": "s3://sixsense-organization-assets/ayush/labeling_job_test/training-test/test-model-13Feb-v2.tar.gz",
     }
 }
