@@ -333,7 +333,7 @@ if __name__ == "__main__":
     endpoint_config = endpoint_master_config.get(endpoint_type)
 
     if action == "create_endpoint":
-        if endpoint_type in ["real-time-endpoint", "serverless-endpoint"]:
+        if endpoint_type in ["real-time-endpoint", "serverless-endpoint", "async-endpoint"]:
             ## This will create Model Object for real-time and serverless endpoints
             create_model(
                 model_name=endpoint_config.get("model_name"),
