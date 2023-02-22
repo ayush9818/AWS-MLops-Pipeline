@@ -307,7 +307,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--endpoint-type",
         type=str,
-        help="Supported Endpoint Types : real-time-endpoint, multi-model-endpoint, serverless-endpoint",
+        help="Supported Endpoint Types : real-time-endpoint, multi-model-endpoint, serverless-endpoint, async-endpoint",
     )
     args = parser.parse_args()
 
@@ -324,7 +324,8 @@ if __name__ == "__main__":
         "real-time-endpoint",
         "multi-model-endpoint",
         "serverless-endpoint",
-    ], f"Supported Endpoint Types are : real-time-endpoint and multi-model-endpoint"
+        "async-endpoint"
+    ], f"Supported Endpoint Types are : real-time-endpoint,multi-model-endpoint, serverless-endpoint and async-endpoint"
 
     assert os.path.exists(config_path), f"{config_path} does not exist"
 
